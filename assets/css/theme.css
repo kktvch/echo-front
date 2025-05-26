@@ -1,0 +1,26 @@
+:root {
+    --accent: #b78b50;
+    --bg-light: #f4f1ed;
+    --bg-dark: #1e1e1e;
+    --text-color: #222;
+    --military-font: 'Oswald', 'Arial Narrow', sans-serif;
+  }
+  
+  .dark {
+    --bg-light: #1a1a1a;
+    --text-color: #eee;
+  }
+  
+  body {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-family: 'Open Sans', sans-serif;
+    transition: all 0.3s ease;
+  }
+  
+  h1, h2, h3 {
+    font-family: var(--military-font);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
