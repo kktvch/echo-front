@@ -1,75 +1,59 @@
-# Nuxt Minimal Starter
+Проект гуманитарной AI-платформы для художественной интерпретации дневников времён Великой Отечественной войны. Генерация текста, изображений и музыки осуществляется с учётом эмоционального контекста фрагментов дневников, а также с уважением к исторической достоверности.
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Возможности
 
-## Setup
+- Генерация художественного текста на основе фрагментов дневников (в стадии подключения)
+- Генерация изображений (в стадии подключения)
+- Генерация музыки (в стадии подключения)
+- Определение эмоционального контекста текста
+- Авторизация пользователей и контроль генераций (Standard / Pro)
+- Система обратной связи
+- Сохранение результатов в личные капсулы
 
-Make sure to install dependencies:
+
+Структура проекта
+│
+├── backend/ # Python backend (FastAPI)
+│ ├── main.py # основной серверный файл
+│ ├── models/ # модули генерации
+│ │ ├── gpt.py # генерация художественного текста
+│ │ ├── musicgen.py # генерация музыки 
+│ │ └── sd.py # генерация изображений 
+│ └── requirements.txt # зависимости Python
+│
+├── components/ # Vue-компоненты
+│
+├── public/ # Статические файлы
+│
+├── src/ # Исходный фронтенд-код
+│ ├── utils/ai.ts # интерфейс вызова нейросетей
+│ └── utils/emotion.ts # анализ эмоций
+│
+├── stores/auth.ts # Pinia store для авторизации
+├── app.vue # Основной Vue-файл
+├── nuxt.config.ts # Nuxt 3 конфигурация
+└── README.md # текущий файл
+
+Запуск проекта
+
+Установка и активация Python-окружения (backend)
 
 ```bash
-# npm
+cd backend
+python -m venv venv
+venv\Scripts\activate    # Windows PowerShell: сначала разрешить ExecutionPolicy
+pip install -r requirements.txt
+
+Запуск backend-сервера
+uvicorn main:app --reload --port 4000
+Точка входа: POST http://localhost:4000/generate-text
+
+Установка зависимостей frontend
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+Запуск Nuxt frontend
 npm run dev
 
-# pnpm
-pnpm dev
+Запуск сервера
+cd server
+node index.js
 
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
