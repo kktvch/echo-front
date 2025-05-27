@@ -14,12 +14,37 @@ function upgrade() {
 </script>
 
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md p-6 relative">
-      <button @click="emit('close')" class="absolute top-2 right-2 text-gray-500 hover:text-black">✕</button>
-      <h2 class="text-2xl font-bold mb-4">Перейти на Pro</h2>
-      <p class="mb-4">С Pro-аккаунтом вы получаете неограниченное количество генераций и доступ к режиму "Душевный дневник".</p>
-      <button @click="upgrade" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded w-full">Купить Pro</button>
+  <Teleport to="body">
+    <div
+      class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex items-center justify-center"
+      @click.self="$emit('close')"
+    >
+      <div
+        class="relative z-50 bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-6 rounded-xl shadow-xl w-[90%] max-w-md"
+      >
+        <button
+          @click="$emit('close')"
+          class="absolute top-3 right-3 text-2xl text-gray-500 hover:text-red-400"
+          aria-label="Закрыть"
+        >
+          &times;
+        </button>
+
+        <h2 class="text-2xl font-bold text-center mb-4">Преимущества Pro</h2>
+        <ul class="text-sm text-left list-disc list-inside space-y-2">
+          <li>Безлимитные генерации</li>
+          <li>Доступ к режиму <strong>«Душевный дневник»</strong></li>
+          <li>Приоритет в очереди</li>
+        </ul>
+
+        <button
+          class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded transition"
+          @click="$emit('close')"
+        >
+          🚀 Купить Pro
+        </button>
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
+

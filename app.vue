@@ -141,7 +141,7 @@ provide('isAccessible', readonly(isAccessible))
     { 'dark:bg-gray-900 dark:text-gray-100': isDark, 'text-xl leading-relaxed': isAccessible }
   ]">
     <Header />
-    <main class="max-w-4xl mx-auto p-6">
+    <main class="max-w-4xl mx-auto p-28 px-6">
       <section class="text-center mb-8 animate-fade-in">
         <h1 class="text-5xl font-military text-military tracking-wider uppercase mb-2">Эхо фронта</h1>
         <p class="text-lg text-gray-600 dark:text-gray-300">Оживи память войны: текст, образ, музыка</p>
@@ -180,6 +180,51 @@ provide('isAccessible', readonly(isAccessible))
       </section>
     </main>
     <Footer />
+
+    <Teleport to="body">
+      <div class="fixed bottom-6 right-6 z-50">
+        <button
+          @mouseenter="showFeedback = true"
+          @mouseleave="showFeedback = false"
+          class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg animate-pulse hover:animate-none"
+        >
+          💬
+        </button>
+
+        <Transition name="fade-slide">
+          <div v-if="showFeedback">
+            <div
+              class="absolute bottom-16 right-0 w-80 bg-white dark:bg-gray-800 text-black dark:text-white p-4 rounded shadow-lg"
+              @mouseenter="showFeedback = true"
+              @mouseleave="showFeedback = false"
+            >
+              <h3 class="font-semibold mb-2">Обратная связь</h3>
+              <textarea
+                v-model="feedbackText"
+                rows="4"
+                placeholder="Ваше сообщение..."
+                class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-black dark:text-white"
+              ></textarea>
+              <button @click="submitFeedback" class="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Отправить
+              </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+    </Teleport>
   </div>
 </template>
 
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+}
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>

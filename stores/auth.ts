@@ -48,6 +48,19 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async register(name: string, email: string, password: string) {
+      const res = await fetch('http://localhost:4000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name, email, password }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+    
+      await this.fetchUser()
+    },
+    
+
     async logout() {
       await fetch('http://localhost:4000/logout', {
         method: 'POST',
