@@ -19,6 +19,7 @@ const myCapsules = ref([])
 const showCapsules = ref(false)
 const selectedCapsule = ref(null)
 const isEditing = ref(false)
+const tips = ref<string[]>([])
 
 const isDark = ref(false)
 const isAccessible = ref(false)
@@ -33,6 +34,48 @@ function reset() {
   selectedType.value = ''
   latestText.value = ''
 }
+
+function dismissTip(index: number) {
+  visibleTips.value.splice(index, 1)
+  if (visibleTips.value.length === 0) {
+    localStorage.setItem('tipsDismissed', 'true')
+  }
+}
+
+function cycleTips() {
+  if (tips.value.length === 0 || localStorage.getItem('tipsDismissed')) return
+
+  let index = 0
+  const interval = setInterval(() => {
+    if (index < tips.value.length) {
+      visibleTips.value.push(tips.value[index])
+      index++
+    } else {
+      clearInterval(interval)
+    }
+  }, 3000)
+}
+
+onMounted(() => {
+  auth.fetchUser()
+  fetchCapsules()
+
+  const html = document.documentElement
+  const savedTheme = localStorage.getItem('theme')
+  const savedA11y = localStorage.getItem('accessibility')
+  isDark.value = savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  isAccessible.value = savedA11y === 'true'
+  html.classList.toggle('dark', isDark.value)
+  html.classList.toggle('accessible', isAccessible.value)
+
+  if (!localStorage.getItem('tipsDismissed')) {
+    tips.value.push('👋 Добро пожаловать! Зарегистрируйтесь, чтобы сохранять капсулы.')
+    tips.value.push('📝 Введите фрагмент дневника и выберите тип генерации.')
+    tips.value.push('🎯 Нажмите "Создать", чтобы начать!')
+    cycleTips()
+  }
+})
+
 
 async function handleGenerateEvent({ type, text }) {
   selectedType.value = type
@@ -130,7 +173,6 @@ provide('toggleAccessibility', () => (isAccessible.value = !isAccessible.value))
 provide('isAccessible', readonly(isAccessible))
 </script>
 
-
 <template>
   <div :class="[
     'min-h-screen',
@@ -141,44 +183,87 @@ provide('isAccessible', readonly(isAccessible))
     { 'dark:bg-gray-900 dark:text-gray-100': isDark, 'text-xl leading-relaxed': isAccessible }
   ]">
     <Header />
-    <main class="max-w-4xl mx-auto p-28 px-6">
-      <section class="text-center mb-8 animate-fade-in">
-        <h1 class="text-5xl font-military text-military tracking-wider uppercase mb-2">Эхо фронта</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-300">Оживи память войны: текст, образ, музыка</p>
-      </section>
 
-      <InputForm @generate="handleGenerateEvent" />
+     <TransitionGroup name="fade-slide" tag="div" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 space-y-2">
+      <div
+        v-for="(tip, index) in visibleTips"
+        :key="index"
+        class="bg-yellow-100 dark:bg-yellow-700 text-black dark:text-white px-4 py-2 rounded shadow flex items-center justify-between max-w-md"
+      >
+        <span>{{ tip }}</span>
+        <button @click="dismissTip(index)" class="ml-4 text-xl font-bold">×</button>
+      </div>
+    </TransitionGroup>
+
+
+    <main class="max-w-4xl mx-auto pt-28 px-6">
+      <Transition name="fade-slide">
+        <section class="text-center mb-8">
+          <h1 class="text-5xl font-military text-military tracking-wider uppercase mb-2 animate-fade-in">Эхо фронта</h1>
+          <p class="text-lg text-gray-600 dark:text-gray-300 animate-fade-in delay-100">Оживи память войны: текст, образ, музыка</p>
+        </section>
+      </Transition>
+
+      <Transition name="fade-slide" appear>
+        <InputForm @generate="handleGenerateEvent" />
+      </Transition>
 
       <div class="mt-8">
-        <Transition name="fade">
-          <ResultCard
-            v-if="result"
-            :type="selectedType"
-            :result="result"
-            @reset="reset"
-          />
+        <Transition name="fade-slide">
+          <ResultCard v-if="result" :type="selectedType" :result="result" @reset="reset" />
         </Transition>
       </div>
 
-      <div v-if="result" class="mt-4 flex justify-center">
-        <button
-          v-if="user"
-          @click="saveCapsule"
-          class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded shadow animate-fade-in"
-        >
-          💾 Сохранить в капсулу
-        </button>
-        <p v-else class="text-sm text-gray-500 dark:text-gray-400 animate-fade-in">
-          🔐 Для создания капсулы войдите в систему
-        </p>
-      </div>
+      <Transition name="fade-slide">
+        <div v-if="result" class="mt-4 flex justify-center">
+          <button v-if="user" @click="saveCapsule" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded shadow animate-fade-in">
+            💾 Сохранить в капсулу
+          </button>
+          <p v-else class="text-sm text-gray-500 dark:text-gray-400 animate-fade-in">
+            🔐 Для создания капсулы войдите в систему
+          </p>
+        </div>
+      </Transition>
 
-      <section class="mt-12 text-sm text-gray-500 dark:text-gray-400 text-center animate-fade-in">
-        <p>
-          Проект создан с уважением к памяти участников Великой Отечественной войны. Результаты являются художественной интерпретацией.
-        </p>
-      </section>
+      <Transition name="fade-slide">
+        <div v-if="user" class="mt-10">
+          <h2 class="text-2xl font-semibold mb-4 text-center text-gray-800 dark:text-white">Мои капсулы памяти</h2>
+          <div v-if="myCapsules.length > 0">
+            <ul class="space-y-4">
+              <li
+                v-for="(capsule, index) in myCapsules"
+                :key="index"
+                class="p-4 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-black dark:text-white shadow"
+              >
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="font-semibold">{{ capsule.title }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ capsule.timestamp }}</p>
+                    <p class="mt-2 text-sm">{{ capsule.raw }}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button @click="() => editCapsule(capsule)" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">✏️</button>
+                    <button @click="() => deleteCapsule(capsule)" class="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">🗑️</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div v-else class="text-center text-gray-500 dark:text-gray-400">
+            Тут пока пусто...
+          </div>
+        </div>
+      </Transition>
+
+      <Transition name="fade-slide">
+        <section class="mt-12 text-sm text-gray-500 dark:text-gray-400 text-center animate-fade-in">
+          <p>
+            Проект создан с уважением к памяти участников Великой Отечественной войны. Результаты являются художественной интерпретацией.
+          </p>
+        </section>
+      </Transition>
     </main>
+
     <Footer />
 
     <Teleport to="body">
@@ -213,6 +298,9 @@ provide('isAccessible', readonly(isAccessible))
         </Transition>
       </div>
     </Teleport>
+
+    <AuthModal :show="showAuthModal" @close="showAuthModal = false" />
+    <ProModal v-if="showProModal" @close="showProModal = false" />
   </div>
 </template>
 

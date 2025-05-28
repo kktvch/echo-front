@@ -6,15 +6,15 @@ export async function handleGenerate(type: string, prompt: string, emotion?: str
   return ''
 }
 
-export async function generateText(prompt: string, emotion?: string): Promise<string> {
-  const res = await fetch('http://localhost:5000/gpt', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+export async function generateText(prompt: string, emotion: string): Promise<string> {
+  const res = await fetch("http://localhost:4000/generate-text", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt, emotion }),
   })
-  if (!res.ok) throw new Error('Ошибка генерации текста')
-  const { result } = await res.json()
-  return result
+
+  const data = await res.json()
+  return data.result
 }
 
 export async function generateImage(prompt: string, emotion?: string): Promise<string> {
