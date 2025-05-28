@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent="submitForm" class="space-y-4 max-w-xl mx-auto">
-    <!-- Текст -->
     <div class="relative">
       <textarea
         v-model="text"
