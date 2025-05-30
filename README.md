@@ -16,25 +16,39 @@
 │
 
 ├── backend/ # Python backend (FastAPI)
+
 │ ├── main.py # основной серверный файл
+
 │ ├── models/ # модули генерации
+
 │ │ ├── gpt.py # генерация художественного текста
+
 │ │ ├── musicgen.py # генерация музыки 
+
 │ │ └── sd.py # генерация изображений 
+
 │ └── requirements.txt # зависимости Python
 │
 
 ├── components/ # Vue-компоненты
+
 │
 ├── public/ # Статические файлы
+
 │
 ├── src/ # Исходный фронтенд-код
+
 │ ├── utils/ai.ts # интерфейс вызова нейросетей
+
 │ └── utils/emotion.ts # анализ эмоций
+
 │
 ├── stores/auth.ts # Pinia store для авторизации
+
 ├── app.vue # Основной Vue-файл
+
 ├── nuxt.config.ts # Nuxt 3 конфигурация
+
 └── README.md # текущий файл
 
 Запуск проекта
