@@ -12,7 +12,9 @@
 
 
 Структура проекта
+
 │
+
 ├── backend/ # Python backend (FastAPI)
 │ ├── main.py # основной серверный файл
 │ ├── models/ # модули генерации
@@ -21,6 +23,7 @@
 │ │ └── sd.py # генерация изображений 
 │ └── requirements.txt # зависимости Python
 │
+
 ├── components/ # Vue-компоненты
 │
 ├── public/ # Статические файлы
@@ -45,8 +48,8 @@ venv\Scripts\activate    # Windows PowerShell: сначала разрешить
 pip install -r requirements.txt
 
 Запуск backend-сервера
-uvicorn main:app --reload --port 4000
-Точка входа: POST http://localhost:4000/generate-text
+uvicorn main:app --reload --port 8000
+Точка входа: POST http://localhost:8000/generate-text
 
 Установка зависимостей frontend
 npm install
